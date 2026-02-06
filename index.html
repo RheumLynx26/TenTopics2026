@@ -9,115 +9,140 @@
     <!-- React y ReactDOM CDNs -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel para procesar JSX en el navegador -->
+    <!-- Babel para procesar JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide Icons para la interfaz -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .vertical-text { writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
+        .qr-container:hover img { transform: scale(1.05); transition: all 0.3s ease; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useMemo, useEffect } = React;
         
-        // Componente para renderizar iconos de Lucide dinámicamente
         const Icon = ({ name, size = 20, className = "" }) => {
-            useEffect(() => {
-                if (window.lucide) {
-                    lucide.createIcons();
-                }
-            }, [name]);
+            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [name]);
             return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
         };
 
         const affiliations = {
             "Prof. Graham R.V. Hughes": "The London Lupus Centre, London Bridge Hospital, London, UK",
-            "Prof. Munther A. Khamashta": "Emeritus professor of Medicine at King's College. London, UK. GSK Global Medical Expert-Lupus. Dubai, UAE",
+            "Prof. Munther A. Khamashta": "Emeritus professor of Medicine at King's College, London, UK. Scientific Director, Immunology. GSK, Dubai, UAE",
             "Prof. Miquel Vilardell Tarrés": "Hospital Quirón Dexeus, Barcelona",
-            "Dr. Lucio Pallarés Ferreres": "Unidad de EAS, Servicio de Medicina Interna, Hospital Universitario Son Espases, Palma de Mallorca",
-            "Dra. Mª Ángeles Aguirre Zamorano": "Servicio de Reumatología, Hospital Universitario Reina Sofía, Córdoba",
-            "Dr. Ana Mª Noblejas Mozo": "Servicio de Medicina Interna, Hospital Universitario La Paz, Madrid",
+            "Dr. Lucio Pallarés Ferreres": "Unidad de EAS, Servicio de Medicina Interna. Hospital Universitario Son Espases, Palma de Mallorca",
+            "Dra. Mª Ángeles Aguirre Zamorano": "Servicio de Reumatología. Hospital Universitario Reina Sofía, Córdoba",
+            "Dr. Ana Mª Noblejas Mozo": "Servicio de Medicina Interna. Hospital Universitario La Paz, Madrid",
             "Dr. Juan Jiménez Alonso": "Médico internista, Granada. Universidad de Granada",
-            "Dra. María Galindo Izquierdo": "Servicio de Reumatología, Hospital Universitario 12 de Octubre, Madrid",
-            "Dra. Mercedes Freire González": "Servicio de Reumatología, Complejo Hospitalario Universitario A Coruña",
-            "Dr. Andrés González García": "Servicio de Medicina Interna, Hospital Universitario Ramón y Cajal, Madrid",
-            "Dr. Guillermo Ruiz Irastorza": "Unidad de EAS, Hospital Universitario Cruces, Biobizkaia, UPV/EHU, Baracaldo",
-            "Dra. Mª José Cuadrado Lozano": "Servicio de Reumatología, Clínica Universidad de Navarra, Madrid",
-            "Dr. José Andrés Román Ivorra": "Servicio de Reumatología, Hospital Universitario La Fe, Valencia",
-            "Dra. Tatiana Cobo Ibáñez": "Servicio de Reumatología, Hospital Universitario Infanta Sofía, Madrid",
-            "Dr. Roberto Pérez Álvarez": "Servicio de Medicina Interna, Hospital Vithas Fátima, Vigo",
-            "Dr. Jesús Loarce Martos": "Servicio de Reumatología, Hospital Universitario Ramón y Cajal, Madrid",
-            "Dr. Albert Selva O'Callaghan": "Unidad de EAS, Servicio de Medicina Interna, Hospital General Universitario Vall D'Hebrón, Barcelona",
-            "Dr. Tarek Carlos Salman Monte": "Adjunto Reumatología. Profesor Asociado UPF. Coordinador de la UEC, Hospital del Mar, Barcelona",
-            "Dr. Antonio Javier Chamorro Fernández": "Servicio de Medicina Interna, Hospital Universitario de Salamanca",
-            "Dr. Jaime Calvo Alen": "Servicio de Reumatología, Hospital Universitario Araba, Vitoria-Gasteiz",
-            "Prof. Matthias Schneider": "Department of Rheumatology, University Hospital Dusseldorf, Germany",
-            "Dra. Leyre Riancho Zarrabeitia": "Servicio de Reumatología, Hospital de Sierrallana, Cantabria",
-            "Dra. Gloria de la Red Bellvis": "Servicio de Medicina Interna, Fundació Hospital de l'Esperit Sant, Santa Coloma de Gramenet, Barcelona",
-            "Prof. Eric Hachulla": "Service de Médecine interne et immunologie clinique, CHU de Lille, France",
-            "Prof. Meryen Farhat": "Service de Médecine interne et immunologie clinique, CHU de Lille, France",
-            "Prof. Maria Tektonidou": "Professor of Rheumatology, National and Kapodistrian University of Athens, Greece",
-            "Dr. Ricard Cervera Segura": "Servicio de Enfermedades Autoinmunes, Hospital Clínic, Barcelona",
-            "Prof. Vicent Fonollosa Pla": "Catedrático Emérito de Medicina, Universidad Autónoma de Barcelona (UAB)",
-            "Dr. Guillermo González Arribas": "Servicio de Reumatología, Complejo Hospitalario Universitario A Coruña",
-            "Dra. Carmen Pilar Simeón Aznar": "Unidad de EAS, Servicio de Medicina Interna, Hospital Universitario Vall D'Hebrón, Barcelona",
-            "Dr. Iván Castellví Barranco": "Servicio de Reumatología, Hospital de la Santa Creu i Sant Pau, Barcelona",
-            "Dra. Clara Itziar Soto Abánades": "Servicio de Medicina Interna, Unidad Hipertensión Pulmonar, Hospital Universitario La Paz, Madrid",
-            "Dra. Miriam Akasbi Montalvo": "Servicio de Medicina Interna, Hospital Universitario Infanta Leonor, Madrid",
-            "Dr. Carlos Marras Fernández-Cid": "Servicio de Reumatología, Hospital Universitario Virgen de la Arrixaca, Murcia",
-            "Dra. Pilar Brito Zerón": "Unidad de EAS, Servicio de Medicina Interna, Hospital CIMA-Sanitas, Barcelona",
-            "Dr. Carlos Feijoo Massó": "Servicio de Medicina Interna, Corporació Sanitària Parc Taulí, Sabadell",
-            "Dr. Ángel Robles Marhuenda": "Servicio de Medicina Interna, Hospital Universitario La Paz, Madrid",
-            "Dra. Eugenia Enríquez Merayo": "Departamento de Reumatología, Hospital Universitario 12 de Octubre, Madrid",
-            "Dr. Francisco Javier Narváez García": "Departamento de Reumatología, Hospital Universitario de Bellvitge, L'Hospitalet de Llobregat",
-            "Dr. Antonis Fanouriakis": "Assistant Professor, National and Kapodistrian University of Athens, Greece",
-            "Dra. Eva Rodríguez García": "Servicio de Nefrología, Hospital del Mar, Barcelona",
-            "Dra. Roser Solans i Laqué": "Unidad de EAS, Servicio de Medicina Interna, Hospital Universitario Vall d'Hebron, Barcelona",
-            "Prof. Onno Teng": "Nephrology clinician-scientist, Leiden University Medical Center (LUMC), Netherlands",
-            "Dr. Juan José Ríos Blanco": "Unidad de EAS, Servicio de Medicina Interna, Hospital Universitario La Paz, Madrid",
-            "Dra. Nuria Navarrete Navarrete": "Servicio de Medicina Interna, Hospital Universitario Virgen de las Nieves, Granada",
-            "Dr. Antoni Sisó Almirall": "Head of Research, CAPSBE. Professor, Dept. Medicine, UB. President CAMFIC",
-            "Dr. Jorge González Martín": "Servicio de Reumatología, Hospital Universitario HM Sanchinarro, Madrid",
-            "Dr. Miguel Martín Cascón": "Servicio de Medicina Interna, Hospital General Universitario Morales Meseguer, Murcia",
-            "Dr. José Miguel Sequí Sabater": "Servicio de Reumatología, Hospital Universitario de La Ribera, Alzira",
-            "Dr. Manuel Ramos Casals": "Servicio de Enfermedades Autoinmunes, Hospital Clínic, Barcelona",
+            "Dra. María Galindo Izquierdo": "Servicio de Reumatología. Hospital Universitario 12 de Octubre, Madrid",
+            "Dra. Mercedes Freire González": "Servicio de Reumatología. Complejo Hospitalario Universitario A Coruña",
+            "Dr. Andrés González García": "Servicio de Medicina Interna. Hospital Universitario Ramón y Cajal, Madrid",
+            "Dr. Guillermo Ruiz Irastorza": "Unidad de Investigación de EAS, Hospital Universitario Cruces, Biobizkaia, Baracaldo",
+            "Dr. Tarek Carlos Salman Monte": "Adjunto Reumatología. Profesor Asociado UPF. Coordinador de la UEC. Hospital del Mar, Barcelona",
+            "Dr. José Andrés Román Ivorra": "Servicio de Reumatología. Hospital Universitario La Fe, Valencia",
+            "Dra. Tatiana Cobo Ibáñez": "Servicio de Reumatología. Hospital Universitario Infanta Sofía, Madrid",
+            "Dr. Roberto Pérez Álvarez": "Servicio de Medicina Interna. Hospital Vithas Fátima, Vigo",
+            "Dr. Jesús Loarce Martos": "Servicio de Reumatología. Hospital Universitario Ramón y Cajal, Madrid",
+            "Dr. Albert Selva O'Callaghan": "Unidad de EAS, Servicio de Medicina Interna. Hospital Vall D'Hebrón, Barcelona",
+            "Dr. Antonio Javier Chamorro Fernández": "Servicio de Medicina Interna. Hospital Universitario de Salamanca",
+            "Dr. Jaime Calvo Alen": "Servicio de Reumatología. Hospital Universitario Araba, Vitoria-Gasteiz",
+            "Prof. Matthias Schneider": "Department of Rheumatology. University Hospital Dusseldorf, Germany",
+            "Dra. Leyre Riancho Zarrabeitia": "Servicio de Reumatología. Hospital de Sierrallana, Cantabria",
+            "Dra. Gloria de la Red Bellvis": "Servicio de Medicina Interna. Fundació Hospital de l'Esperit Sant, Barcelona",
+            "Prof. Eric Hachulla": "CHU de Lille - Hôpital Claude Huriez, Lille, Francia",
+            "Prof. Meryen Farhat": "CHU de Lille - Hôpital Claude Huriez, Lille, Francia",
+            "Prof. Maria Tektonidou": "Professor of Rheumatology, National and Kapodistrian University of Athens, Grecia",
+            "Dr. Ricard Cervera Segura": "Servicio de Enfermedades Autoinmunes. Hospital Clínic, Barcelona",
+            "Prof. Vicent Fonollosa Pla": "Catedrático Emérito de Medicina. Universidad Autónoma de Barcelona (UAB)",
+            "Dr. Guillermo González Arribas": "Servicio de Reumatología. Complejo Hospitalario Universitario A Coruña",
+            "Dra. Carmen Pilar Simeón Aznar": "Unidad de EAS, Servicio de Medicina Interna. Hospital Vall D'Hebrón, Barcelona",
+            "Dr. Iván Castellví Barranco": "Servicio de Reumatología. Hospital de la Santa Creu i Sant Pau, Barcelona",
+            "Dra. Clara Itziar Soto Abánades": "Unidad de Hipertensión Pulmonar. Hospital Universitario La Paz, Madrid",
+            "Dra. Miriam Akasbi Montalvo": "Servicio de Medicina Interna. Hospital Universitario Infanta Leonor, Madrid",
+            "Dr. Carlos Marras Fernández-Cid": "Servicio de Reumatología. Hospital Universitario Virgen de la Arrixaca, Murcia",
+            "Dra. Pilar Brito Zerón": "Unidad de EAS, Servicio de Medicina Interna. Hospital CIMA-Sanitas, Barcelona",
+            "Dr. Carlos Feijoo Massó": "Servicio de Medicina Interna. Corporació Sanitària Parc Taulí, Sabadell",
+            "Dr. Ángel Robles Marhuenda": "Servicio de Medicina Interna. Hospital Universitario La Paz, Madrid",
+            "Dra. Eugenia Enríquez Merayo": "Departamento de Reumatología. Hospital Universitario 12 de Octubre, Madrid",
+            "Dr. Francisco Javier Narváez García": "Departamento de Reumatología. Hospital Universitario de Bellvitge, Barcelona",
+            "Dr. Antonis Fanouriakis": "Assistant Professor, University of Athens, Grecia",
+            "Dra. Eva Rodríguez García": "Servicio de Nefrología. Hospital del Mar, Barcelona",
+            "Dra. Roser Solans i Laqué": "Unidad de EAS, Servicio de Medicina Interna. Hospital Vall d'Hebron, Barcelona",
+            "Prof. Onno Teng": "Leiden University Medical Center (LUMC), Países Bajos",
+            "Dr. Juan José Ríos Blanco": "Servicio de Medicina Interna. Hospital Universitario La Paz, Madrid",
+            "Dra. Nuria Navarrete Navarrete": "Servicio de Medicina Interna. Hospital Universitario Virgen de las Nieves, Granada",
+            "Dr. Antoni Sisó Almirall": "Head of Research, CAPSBE. UB. President CAMFIC",
+            "Dr. Jorge González Martín": "Servicio de Reumatología. Hospital Universitario HM Sanchinarro, Madrid",
+            "Dr. Miguel Martín Cascón": "Servicio de Medicina Interna. Hospital Morales Meseguer, Murcia",
+            "Dr. José Miguel Sequí Sabater": "Servicio de Reumatología. Hospital Universitario de La Ribera, Valencia",
+            "Dra. Mª José Cuadrado Lozano": "Servicio de Reumatología. Clínica Universidad de Navarra, Madrid",
+            "Dr. Manuel Ramos Casals": "Servicio de Enfermedades Autoinmunes. Hospital Clínic, Barcelona",
             "Prof. Carlos Vasconcelos": "Centro Hospitalar Universitário de Santo António, Oporto, Portugal"
         };
 
         const programData = [
-            // --- VIERNES 6 DE FEBRERO ---
-            { day: "Viernes, 6 de Febrero", time: "15:00 - 15:05", block: "Inauguración", isSpecialBlock: false, moderators: [], title: "INAUGURACIÓN", speakers: ["Prof. Graham R.V. Hughes", "Prof. Munther A. Khamashta"], category: "General" },
-            { day: "Viernes, 6 de Febrero", time: "15:05 - 15:30", block: "Memorial Josep Font: 20 Aniversario", isSpecialBlock: false, moderators: ["Prof. Miquel Vilardell Tarrés", "Dr. Lucio Pallarés Ferreres"], title: "MASTERCLASS IN MEMORIAM: Mitos y Perlas en el SAF", speakers: ["Prof. Munther A. Khamashta"], category: "Masterclass" },
-            { day: "Viernes, 6 de Febrero", time: "15:30 - 15:50", block: "Bloque 1: Lupus Seguimiento", isSpecialBlock: true, moderators: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Lupus, expertos y atención primaria", speakers: ["Dr. Juan Jiménez Alonso"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "15:50 - 16:10", block: "Bloque 1: Lupus Seguimiento", isSpecialBlock: true, moderators: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Seguimiento del daño orgánico en LES", speakers: ["Dra. María Galindo Izquierdo"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "16:10 - 16:30", block: "Bloque 1: Lupus Seguimiento", isSpecialBlock: true, moderators: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "El papel del Interferón en el Lupus", speakers: ["Dr. Lucio Pallarés Ferreres"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "16:30 - 16:40", block: "Bloque 1: Lupus Seguimiento", isSpecialBlock: true, moderators: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Discusión", speakers: [], category: "Discusión" },
-            { day: "Viernes, 6 de Febrero", time: "16:40 - 17:00", block: "Bloque 2: Lupus Tratamiento", isSpecialBlock: true, moderators: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Pulsos de metil-prednisolona: la piedra filosofal del tratamiento del lupus", speakers: ["Dr. Guillermo Ruiz Irastorza"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "17:00 - 17:20", block: "Bloque 2: Lupus Tratamiento", isSpecialBlock: true, moderators: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Perfil del paciente para tratamiento con Belimumab en España: Evolución en los últimos 10 años", speakers: ["Dra. Mª José Cuadrado Lozano"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "17:20 - 17:40", block: "Bloque 2: Lupus Tratamiento", isSpecialBlock: true, moderators: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "LES: De la patogenia a las dianas terapéuticas", speakers: ["Dr. José Andrés Román Ivorra"], category: "Lupus" },
-            { day: "Viernes, 6 de Febrero", time: "17:40 - 17:50", block: "Bloque 2: Lupus Tratamiento", isSpecialBlock: true, moderators: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Discusión", speakers: [], category: "Discusión" },
-            { day: "Viernes, 6 de Febrero", time: "17:50 - 18:20", block: "Pausa", isSpecialBlock: false, moderators: [], title: "PAUSA - CAFÉ", speakers: [], category: "Pausa" },
-            { day: "Viernes, 6 de Febrero", time: "18:20 - 18:40", block: "Bloque 3: Miopatías Inflamatorias", isSpecialBlock: true, moderators: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Afectación pulmonar en las miopatías inflamatorias", speakers: ["Dr. Jesús Loarce Martos"], category: "Miopatías" },
-            { day: "Viernes, 6 de Febrero", time: "18:40 - 19:00", block: "Bloque 3: Miopatías Inflamatorias", isSpecialBlock: true, moderators: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Miositis compleja: ChatGPT contra el Prof. Selva", speakers: ["Dr. Albert Selva O'Callaghan"], category: "Miopatías" },
-            { day: "Viernes, 6 de Febrero", time: "19:00 - 19:10", block: "Bloque 3: Miopatías Inflamatorias", isSpecialBlock: true, moderators: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Discusión", speakers: [], category: "Discusión" },
-            { day: "Viernes, 6 de Febrero", time: "19:10 - 19:30", block: "Bloque 4: El futuro del Lupus y de las EAS", isSpecialBlock: true, moderators: ["Dr. Tarek Carlos Salman Monte", "Dr. Antonio Javier Chamorro Fernández"], title: "Nuevo paradigma en LES: relación entre lo autoinflamatorio y la autoinmunidad", speakers: ["Dr. Jaime Calvo Alen"], category: "EAS" },
-            { day: "Viernes, 6 de Febrero", time: "19:30 - 19:40", block: "Bloque 4: El futuro del Lupus y de las EAS", isSpecialBlock: true, moderators: ["Dr. Tarek Carlos Salman Monte", "Dr. Antonio Javier Chamorro Fernández"], title: "Discusión", speakers: [], category: "Discusión" },
-            { day: "Viernes, 6 de Febrero", time: "19:40 - 20:00", block: "Conferencia Magistral", isSpecialBlock: false, moderators: ["Dr. Ricard Cervera Segura"], title: "GRAHAM HUGHES AUTOIMMUNITY ORATION: Registries in lupus", speakers: ["Prof. Matthias Schneider"], category: "Oration" },
+            // VIERNES
+            { day: "Viernes, 6 de Febrero", time: "15:00", block: "Inauguración", mods: ["Prof. Graham R.V. Hughes", "Prof. Munther A. Khamashta"], title: "INAUGURACIÓN", speakers: [], cat: "General" },
+            { day: "Viernes, 6 de Febrero", time: "15:05", block: "Memorial Josep Font", mods: ["Prof. Miquel Vilardell Tarrés", "Dr. Lucio Pallarés Ferreres"], title: "MASTERCLASS IN MEMORIAM: Mitos y Perlas en el SAF", speakers: ["Prof. Munther A. Khamashta"], cat: "Masterclass" },
+            { day: "Viernes, 6 de Febrero", time: "15:30", block: "Lupus Seguimiento", mods: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Lupus, expertos y atención primaria", speakers: ["Dr. Juan Jiménez Alonso"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "15:50", block: "Lupus Seguimiento", mods: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Seguimiento del daño orgánico en LES", speakers: ["Dra. María Galindo Izquierdo"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "16:10", block: "Lupus Seguimiento", mods: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "El papel del Interferón en el Lupus", speakers: ["Dr. Lucio Pallarés Ferreres"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "16:30", block: "Lupus Seguimiento", mods: ["Dra. Mª Ángeles Aguirre Zamorano", "Dr. Ana Mª Noblejas Mozo"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Viernes, 6 de Febrero", time: "16:40", block: "Bloque 1: Lupus Tratamiento", mods: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Pulsos de metil-prednisolona: la piedra filosofal", speakers: ["Dr. Guillermo Ruiz Irastorza"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "17:00", block: "Bloque 1: Lupus Tratamiento", mods: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Perfil del paciente para tratamiento con Belimumab", speakers: ["Dr. Tarek Carlos Salman Monte"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "17:20", block: "Bloque 1: Lupus Tratamiento", mods: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "LES: De la patogenia a las dianas terapéuticas", speakers: ["Dr. José Andrés Román Ivorra"], cat: "Lupus" },
+            { day: "Viernes, 6 de Febrero", time: "17:40", block: "Bloque 1: Lupus Tratamiento", mods: ["Dra. Mercedes Freire González", "Dr. Andrés González García"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Viernes, 6 de Febrero", time: "17:50", block: "Pausa", mods: [], title: "PAUSA - CAFÉ", speakers: [], cat: "Pausa" },
+            
+            { day: "Viernes, 6 de Febrero", time: "18:20", block: "Bloque 2: Miopatías Inflamatorias", mods: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Afectación pulmonar en las miopatías", speakers: ["Dr. Jesús Loarce Martos"], cat: "Miopatías" },
+            { day: "Viernes, 6 de Febrero", time: "18:40", block: "Bloque 2: Miopatías Inflamatorias", mods: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Miositis compleja: ChatGPT contra el Prof. Selva", speakers: ["Dr. Albert Selva O'Callaghan"], cat: "Miopatías" },
+            { day: "Viernes, 6 de Febrero", time: "19:00", block: "Bloque 2: Miopatías Inflamatorias", mods: ["Dra. Tatiana Cobo Ibáñez", "Dr. Roberto Pérez Álvarez"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Viernes, 6 de Febrero", time: "19:10", block: "Bloque 3: El futuro del Lupus y de las EAS", mods: ["Dr. Tarek Carlos Salman Monte", "Dr. Antonio Javier Chamorro Fernández"], title: "Nuevo paradigma en LES: autoinflamatorio y autoinmunidad", speakers: ["Dr. Jaime Calvo Alen"], cat: "EAS" },
+            { day: "Viernes, 6 de Febrero", time: "19:30", block: "Bloque 3: El futuro del Lupus y de las EAS", mods: ["Dr. Tarek Carlos Salman Monte", "Dr. Antonio Javier Chamorro Fernández"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Viernes, 6 de Febrero", time: "19:40", block: "Conferencia Magistral", mods: ["Prof. Graham R.V. Hughes", "Dr. Ricard Cervera Segura"], title: "GRAHAM HUGHES AUTOIMMUNITY ORATION: Registries in lupus", speakers: ["Prof. Matthias Schneider"], cat: "Oration" },
 
-            // --- SÁBADO 7 DE FEBRERO ---
-            { day: "Sábado, 7 de Febrero", time: "09:00 - 09:20", block: "Bloque 5: Síndrome Antifosfolipídico", isSpecialBlock: true, moderators: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "MASTERCLASS: Patient education in EAS", speakers: ["Prof. Eric Hachulla", "Prof. Meryen Farhat"], category: "Masterclass" },
-            { day: "Sábado, 7 de Febrero", time: "09:20 - 09:40", block: "Bloque 5: Síndrome Antifosfolipídico", isSpecialBlock: true, moderators: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "MASTERCLASS: APS disease activity", speakers: ["Prof. Maria Tektonidou"], category: "Masterclass" },
-            { day: "Sábado, 7 de Febrero", time: "09:40 - 10:00", block: "Bloque 5: Síndrome Antifosfolipídico", isSpecialBlock: true, moderators: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "SAF Obstétrico Refractario", speakers: ["Dr. Ricard Cervera Segura"], category: "SAF" },
-            { day: "Sábado, 7 de Febrero", time: "10:15 - 10:35", block: "Bloque 6: Esclerosis Sistémica e HTP", isSpecialBlock: true, moderators: ["Prof. Vicent Fonollosa Pla", "Dr. Guillermo González Arribas"], title: "Esclerodermia: de las guías a la práctica", speakers: ["Dra. Carmen Pilar Simeón Aznar"], category: "Esclerosis" },
-            { day: "Sábado, 7 de Febrero", time: "16:30 - 17:00", block: "Bloque 10: Taller de IA en EAS", isSpecialBlock: true, moderators: ["Dr. Antoni Sisó Almirall"], title: "TALLER DE IA EN EAS", speakers: ["Dr. Jorge González Martín", "Dr. Miguel Martín Cascón", "Dr. José Miguel Sequí Sabater"], category: "IA" },
-            { day: "Sábado, 7 de Febrero", time: "17:00 - 17:25", block: "Bloque 11: Conferencia de Clausura", isSpecialBlock: true, moderators: ["Dra. Mª José Cuadrado Lozano", "Dr. Manuel Ramos Casals"], title: "MASTERCLASS: THE AUTOIMMUNOLOGISTS", speakers: ["Prof. Carlos Vasconcelos"], category: "Masterclass" },
-            { day: "Sábado, 7 de Febrero", time: "17:25 - 17:30", block: "Clausura", isSpecialBlock: false, moderators: [], title: "CLAUSURA", speakers: ["Dr. Ricard Cervera Segura", "Dr. Manuel Ramos Casals", "Dra. Mª José Cuadrado Lozano"], category: "General" }
+            // SÁBADO
+            { day: "Sábado, 7 de Febrero", time: "09:00", block: "Bloque 4: Síndrome Antifosfolipídico", mods: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "MASTERCLASS (video): Patient education in EAS", speakers: ["Prof. Eric Hachulla", "Prof. Meryen Farhat"], cat: "Masterclass" },
+            { day: "Sábado, 7 de Febrero", time: "09:20", block: "Bloque 4: Síndrome Antifosfolipídico", mods: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "MASTERCLASS: APS disease activity", speakers: ["Prof. Maria Tektonidou"], cat: "Masterclass" },
+            { day: "Sábado, 7 de Febrero", time: "09:40", block: "Bloque 4: Síndrome Antifosfolipídico", mods: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "SAF obstétrico refractario: perspectivas terapéuticas", speakers: ["Dr. Ricard Cervera Segura"], cat: "SAF" },
+            { day: "Sábado, 7 de Febrero", time: "10:00", block: "Bloque 4: Síndrome Antifosfolipídico", mods: ["Dra. Leyre Riancho Zarrabeitia", "Dra. Gloria de la Red Bellvis"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Sábado, 7 de Febrero", time: "10:15", block: "Bloque 5: Esclerosis Sistémica e HTP", mods: ["Prof. Vicent Fonollosa Pla", "Dr. Guillermo González Arribas"], title: "Esclerodermia: de las guías a la práctica clínica", speakers: ["Dra. Carmen Pilar Simeón Aznar"], cat: "Esclerosis" },
+            { day: "Sábado, 7 de Febrero", time: "10:35", block: "Bloque 5: Esclerosis Sistémica e HTP", mods: ["Prof. Vicent Fonollosa Pla", "Dr. Guillermo González Arribas"], title: "Esclerosis Sistémica y edad avanzada", speakers: ["Dr. Iván Castellví Barranco"], cat: "Esclerosis" },
+            { day: "Sábado, 7 de Febrero", time: "10:55", block: "Bloque 5: Esclerosis Sistémica e HTP", mods: ["Prof. Vicent Fonollosa Pla", "Dr. Guillermo González Arribas"], title: "La HTP compleja: casos prácticos", speakers: ["Dra. Clara Itziar Soto Abánades"], cat: "HTP" },
+            { day: "Sábado, 7 de Febrero", time: "11:15", block: "Bloque 5: Esclerosis Sistémica e HTP", mods: ["Prof. Vicent Fonollosa Pla", "Dr. Guillermo González Arribas"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Sábado, 7 de Febrero", time: "11:30", block: "Pausa", mods: [], title: "PAUSA - CAFÉ", speakers: [], cat: "Pausa" },
+            
+            { day: "Sábado, 7 de Febrero", time: "12:00", block: "Bloque 6: Sjögren, Sarcoidosis y otras EAS", mods: ["Dra. Miriam Akasbi Montalvo", "Dr. Carlos Marras Fernández-Cid"], title: "Revolución terapéutica en Sjögren: nuevos biológicos", speakers: ["Dra. Pilar Brito Zerón"], cat: "Sjögren" },
+            { day: "Sábado, 7 de Febrero", time: "12:20", block: "Bloque 6: Sjögren, Sarcoidosis y otras EAS", mods: ["Dra. Miriam Akasbi Montalvo", "Dr. Carlos Marras Fernández-Cid"], title: "Influencia de la edad en el fenotipo de la sarcoidosis", speakers: ["Dr. Carlos Feijoo Massó"], cat: "Sarcoidosis" },
+            { day: "Sábado, 7 de Febrero", time: "12:40", block: "Bloque 6: Sjögren, Sarcoidosis y otras EAS", mods: ["Dra. Miriam Akasbi Montalvo", "Dr. Carlos Marras Fernández-Cid"], title: "Cómo las EAS evolucionan en el tiempo: casos reales", speakers: ["Dr. Ángel Robles Marhuenda"], cat: "EAS" },
+            { day: "Sábado, 7 de Febrero", time: "13:00", block: "Bloque 6: Sjögren, Sarcoidosis y otras EAS", mods: ["Dra. Miriam Akasbi Montalvo", "Dr. Carlos Marras Fernández-Cid"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Sábado, 7 de Febrero", time: "13:15", block: "Bloque 7: Nefropatía Lúpica", mods: ["Dra. Eugenia Enríquez Merayo", "Dr. Francisco Javier Narváez García"], title: "MASTERCLASS: EULAR recommendations for lupus nephritis", speakers: ["Dr. Antonis Fanouriakis"], cat: "Nefropatía" },
+            { day: "Sábado, 7 de Febrero", time: "13:35", block: "Bloque 7: Nefropatía Lúpica", mods: ["Dra. Eugenia Enríquez Merayo", "Dr. Francisco Javier Narváez García"], title: "Deep response in lupus nephritis", speakers: ["Dra. Eva Rodríguez García"], cat: "Nefropatía" },
+            { day: "Sábado, 7 de Febrero", time: "13:55", block: "Bloque 7: Nefropatía Lúpica", mods: ["Dra. Eugenia Enríquez Merayo", "Dr. Francisco Javier Narváez García"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Sábado, 7 de Febrero", time: "14:05", block: "Pausa", mods: [], title: "ALMUERZO DE TRABAJO", speakers: [], cat: "Pausa" },
+            
+            { day: "Sábado, 7 de Febrero", time: "15:15", block: "Bloque 8: Vasculitis Sistémicas", mods: ["Dr. Francisco Javier Narváez García", "Dra. Roser Solans i Laqué"], title: "MASTERCLASS: ANCA-associated vasculitis", speakers: ["Prof. Onno Teng"], cat: "Vasculitis" },
+            { day: "Sábado, 7 de Febrero", time: "15:35", block: "Bloque 8: Vasculitis Sistémicas", mods: ["Dr. Francisco Javier Narváez García", "Dra. Roser Solans i Laqué"], title: "EAS y Vasculitis en la UCI: Retos y Pronóstico", speakers: ["Dr. Juan José Ríos Blanco"], cat: "Vasculitis" },
+            { day: "Sábado, 7 de Febrero", time: "15:55", block: "Bloque 8: Vasculitis Sistémicas", mods: ["Dr. Francisco Javier Narváez García", "Dra. Roser Solans i Laqué"], title: "Arteritis de la temporal: afectación poco frecuente", speakers: ["Dra. Nuria Navarrete Navarrete"], cat: "Vasculitis" },
+            { day: "Sábado, 7 de Febrero", time: "16:15", block: "Bloque 8: Vasculitis Sistémicas", mods: ["Dr. Francisco Javier Narváez García", "Dra. Roser Solans i Laqué"], title: "Discusión", speakers: [], cat: "Discusión" },
+            
+            { day: "Sábado, 7 de Febrero", time: "16:30", block: "Bloque 9: Taller de IA en EAS", mods: ["Dr. Antoni Sisó Almirall", "Dr. Jorge González Martín"], title: "TALLER DE IA EN EAS", speakers: ["Dr. Miguel Martín Cascón", "Dr. José Miguel Sequí Sabater"], cat: "IA" },
+            
+            { day: "Sábado, 7 de Febrero", time: "17:00", block: "Bloque 10: Conferencia de Clausura", mods: ["Dra. Mª José Cuadrado Lozano", "Dr. Manuel Ramos Casals"], title: "MASTERCLASS: THE AUTOIMMUNOLOGISTS", speakers: ["Prof. Carlos Vasconcelos"], cat: "Masterclass" },
+            { day: "Sábado, 7 de Febrero", time: "17:25", block: "Clausura", mods: [], title: "CLAUSURA", speakers: ["Dr. Ricard Cervera Segura", "Dr. Manuel Ramos Casals", "Dra. Mª José Cuadrado Lozano"], cat: "General" }
         ];
 
         const App = () => {
@@ -125,16 +150,14 @@
             const [activeDay, setActiveDay] = useState("Todos");
             const [activeView, setActiveView] = useState("Programa");
 
-            const driveFolderUrl = "https://drive.google.com/drive/folders/1UKHxUVXkyxdMHkQrWSV5htt2jlqzu4aF?usp=sharing";
+            const appUrl = "https://rheumlynx26.github.io/TenTopics2026/";
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(appUrl)}`;
 
-            // Función inteligente para ordenar por apellido (ignora títulos y maneja nombres compuestos)
-            const getSortableName = (fullName) => {
-                let name = fullName.replace(/^(Dr\.|Dra\.|Prof\.)\s+/i, '').trim();
+            const getSortableName = (n) => {
+                let name = n.replace(/^(Dr\.|Dra\.|Prof\.)\s+/i, '').trim();
                 name = name.replace(/^(Mª|M\.|A\.)\s+/i, '');
-                const compoundNames = ["José Andrés", "José Miguel", "Francisco Javier", "Ana Mª", "Mª Ángeles", "Tarek Carlos", "Antonio Javier", "Clara Itziar", "Carmen Pilar", "Munther A.", "Graham R.V."];
-                for (const compound of compoundNames) {
-                    if (name.startsWith(compound)) return name.slice(compound.length).trim().toLowerCase();
-                }
+                const compounds = ["José Andrés", "José Miguel", "Francisco Javier", "Ana Mª", "Mª Ángeles", "Tarek Carlos", "Antonio Javier", "Clara Itziar", "Carmen Pilar", "Munther A.", "Graham R.V."];
+                for (const c of compounds) if (name.startsWith(c)) return name.slice(c.length).trim().toLowerCase();
                 const parts = name.split(/\s+/);
                 return (parts.length > 1 ? parts.slice(1).join(' ') : name).toLowerCase();
             };
@@ -143,95 +166,83 @@
                 const list = {};
                 programData.forEach(item => {
                     item.speakers.forEach(s => {
-                        if (!list[s]) list[s] = { affiliation: affiliations[s] || "Afiliación no disponible", roles: [] };
+                        if (!list[s]) list[s] = { aff: affiliations[s] || "Afiliación no detallada", roles: [] };
                         list[s].roles.push({ type: "Ponente", title: item.title, block: item.block, time: item.time, day: item.day });
                     });
-                    item.moderators.forEach(m => {
-                        if (!list[m]) list[m] = { affiliation: affiliations[m] || "Afiliación no disponible", roles: [] };
+                    item.mods.forEach(m => {
+                        if (!list[m]) list[m] = { aff: affiliations[m] || "Afiliación no detallada", roles: [] };
                         list[m].roles.push({ type: "Moderador", title: item.title, block: item.block, time: item.time, day: item.day });
                     });
                 });
-                return Object.entries(list)
-                    .map(([name, data]) => ({ name, ...data }))
-                    .sort((a, b) => getSortableName(a.name).localeCompare(getSortableName(b.name)));
+                return Object.entries(list).map(([name, d]) => ({ name, ...d })).sort((a,b) => getSortableName(a.name).localeCompare(getSortableName(b.name)));
             }, []);
 
             const filteredProgram = useMemo(() => {
-                return programData.filter(item => {
-                    const s = searchTerm.toLowerCase();
-                    const matchesSearch = item.title.toLowerCase().includes(s) || item.speakers.some(sp => sp.toLowerCase().includes(s)) || item.block.toLowerCase().includes(s) || item.moderators.some(m => m.toLowerCase().includes(s));
-                    const matchesDay = activeDay === "Todos" || item.day.includes(activeDay);
-                    return matchesSearch && matchesDay;
-                });
+                const s = searchTerm.toLowerCase();
+                return programData.filter(i => (i.title.toLowerCase().includes(s) || i.block.toLowerCase().includes(s) || i.speakers.some(sp => sp.toLowerCase().includes(s)) || i.mods.some(m => m.toLowerCase().includes(s))) && (activeDay === "Todos" || i.day.includes(activeDay)));
             }, [searchTerm, activeDay]);
 
             const filteredPeople = useMemo(() => {
-                return peopleList.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.affiliation.toLowerCase().includes(searchTerm.toLowerCase()));
+                const s = searchTerm.toLowerCase();
+                return peopleList.filter(p => p.name.toLowerCase().includes(s) || p.aff.toLowerCase().includes(s));
             }, [searchTerm, peopleList]);
 
             return (
-                <div className="min-h-screen bg-slate-50 text-slate-900 pb-12">
-                    <header className="bg-[#8e7a1d] text-white shadow-xl overflow-hidden relative">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full -mr-40 -mt-40 blur-3xl"></div>
-                        <div className="max-w-5xl mx-auto px-6 py-14 relative z-10">
-                            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-                                <div className="text-center lg:text-left space-y-4">
-                                    <div className="inline-flex items-center gap-2 bg-black/10 backdrop-blur px-4 py-1.5 rounded-full text-[10px] tracking-[0.3em] font-black uppercase border border-white/10">Josep Font Franco • Memorial 20 Aniv.</div>
-                                    <h1 className="text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight">JOSEP FONT IN AUTOIMMUNE DISEASES <br className="hidden lg:block"/> & RHEUMATOLOGY</h1>
-                                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 pt-4">
-                                        <div className="flex items-center gap-3 text-white/90">
-                                            <Icon name="calendar" className="opacity-60" />
-                                            <p className="font-bold text-lg italic">6 y 7 de Febrero, 2026</p>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-white/90">
-                                            <Icon name="map-pin" className="opacity-60" />
-                                            <p className="font-bold text-lg italic">Hotel Barceló Sants, Barcelona</p>
-                                        </div>
-                                    </div>
+                <div class="min-h-screen pb-12">
+                    <header class="bg-[#8e7a1d] text-white shadow-xl relative overflow-hidden px-6 py-14">
+                        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full -mr-40 -mt-40 blur-3xl"></div>
+                        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
+                            <div class="text-center lg:text-left space-y-4">
+                                <div class="inline-flex bg-black/10 px-4 py-1 rounded-full text-[10px] tracking-widest font-black uppercase">Josep Font Franco • Memorial 20 Aniv.</div>
+                                <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight">JOSEP FONT IN AUTOIMMUNE DISEASES <br class="hidden lg:block"/> & RHEUMATOLOGY</h1>
+                                <div class="flex flex-wrap justify-center lg:justify-start gap-8 pt-4">
+                                    <div class="flex items-center gap-3"><Icon name="calendar" class="opacity-60"/><p class="font-bold text-lg italic">6 y 7 de Febrero, 2026</p></div>
+                                    <div class="flex items-center gap-3"><Icon name="map-pin" class="opacity-60"/><p class="font-bold text-lg italic">Hotel Barceló Sants, Barcelona</p></div>
                                 </div>
-                                <div className="w-44 h-44 bg-[#a18c26] rounded-full border-8 border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl">
-                                   <span className="text-[11px] font-black tracking-widest opacity-80 uppercase leading-none">Established 1998</span>
-                                   <div className="h-0.5 w-10 bg-white/30 my-2"></div>
-                                   <span className="text-xl font-black leading-none uppercase">28<br/>TEN<br/>TOPICS</span>
-                                   <div className="h-0.5 w-10 bg-white/30 my-2"></div>
-                                   <span className="text-[10px] font-bold opacity-80 uppercase leading-none">Josep Font</span>
-                                </div>
+                            </div>
+                            <div class="w-44 h-44 bg-[#a18c26] rounded-full border-8 border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl shrink-0 group hover:rotate-6 transition-all duration-500">
+                                <span class="text-[11px] font-black tracking-widest opacity-80 uppercase leading-none mb-1">Established 1998</span>
+                                <div class="h-0.5 w-10 bg-white/30 my-2"></div>
+                                <span class="text-xl font-black leading-none uppercase">28<br/>TEN<br/>TOPICS</span>
+                                <div class="h-0.5 w-10 bg-white/30 my-2"></div>
+                                <span class="text-[10px] font-bold opacity-80 uppercase mt-1 leading-none">Josep Font</span>
                             </div>
                         </div>
                     </header>
 
-                    <main className="max-w-5xl mx-auto px-4 -mt-12 relative z-20">
-                        <div className="mb-6 flex justify-center lg:justify-start">
-                            <a href={driveFolderUrl} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-white border-2 border-[#8e7a1d] px-8 py-4 rounded-2xl shadow-xl hover:bg-[#8e7a1d] hover:text-white transition-all transform hover:-translate-y-1 active:scale-95">
-                                <div className="w-12 h-12 rounded-xl bg-[#8e7a1d]/10 flex items-center justify-center text-[#8e7a1d] group-hover:bg-white/20 group-hover:text-white">
-                                    <Icon name="file-text" size={28} />
+                    <main class="max-w-5xl mx-auto px-4 -mt-12 relative z-20">
+                        <div class="flex justify-center mb-8">
+                            <div class="bg-white border border-slate-200 p-5 rounded-3xl shadow-lg flex items-center gap-6 max-w-md w-full">
+                                <div class="qr-container bg-slate-50 p-2 rounded-2xl border border-slate-100 shrink-0">
+                                    <img src={qrImageUrl} alt="QR" class="w-24 h-24 rounded-lg" />
                                 </div>
-                                <div className="text-left">
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Recursos del Congreso</p>
-                                    <p className="text-lg font-black tracking-tight flex items-center gap-2">Infografías de las ponencias <Icon name="external-link" size={16} /></p>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-[#8e7a1d] mb-1">Acceso Móvil</p>
+                                    <p class="text-sm font-bold text-slate-700 leading-tight">Escanea este código para llevar la App en tu móvil.</p>
+                                    <p class="text-[10px] font-medium text-slate-400 mt-2 truncate w-48">{appUrl}</p>
                                 </div>
-                            </a>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-3xl shadow-2xl p-6 lg:p-10 mb-10 border border-slate-200">
-                            <div className="flex flex-col gap-8">
-                                <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-center">
-                                    <button onClick={() => setActiveView("Programa")} className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${activeView === "Programa" ? "bg-white text-[#8e7a1d] shadow-lg" : "text-slate-500"}`}><Icon name="book-open" size={16} /> Programa Científico</button>
-                                    <button onClick={() => setActiveView("Expertos")} className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${activeView === "Expertos" ? "bg-white text-[#8e7a1d] shadow-lg" : "text-slate-500"}`}><Icon name="users" size={16} /> Ponentes y Moderadores</button>
+                        <div class="bg-white rounded-3xl shadow-2xl p-6 lg:p-10 mb-10 border border-slate-200">
+                            <div class="flex flex-col gap-8">
+                                <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-center">
+                                    <button onClick={() => setActiveView("Programa")} class={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 ${activeView === "Programa" ? "bg-white text-[#8e7a1d] shadow-lg scale-[1.03]" : "text-slate-500 hover:text-slate-800"}`}><Icon name="book-open" size={16}/> Programa Científico</button>
+                                    <button onClick={() => setActiveView("Expertos")} class={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 ${activeView === "Expertos" ? "bg-white text-[#8e7a1d] shadow-lg scale-[1.03]" : "text-slate-500 hover:text-slate-800"}`}><Icon name="users" size={16}/> Ponentes y Moderadores</button>
                                 </div>
-                                <div className="grid lg:grid-cols-3 gap-8 items-end">
-                                    <div className={`${activeView === "Programa" ? "lg:col-span-2" : "lg:col-span-3"} space-y-3`}>
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Buscador Inteligente</label>
-                                        <div className="relative group">
-                                            <Icon name="search" className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
-                                            <input type="text" placeholder="Ponente, bloque, hospital..." className="w-full pl-16 pr-8 py-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-[#8e7a1d]/5 outline-none transition-all text-xl font-semibold" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                <div class="grid lg:grid-cols-3 gap-8 items-end">
+                                    <div class={`${activeView === "Programa" ? "lg:col-span-2" : "lg:col-span-3"} space-y-3`}>
+                                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Buscador Inteligente</label>
+                                        <div class="relative group">
+                                            <Icon name="search" class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#8e7a1d]" size={24} />
+                                            <input type="text" placeholder="Ponente, bloque, título de charla..." class="w-full pl-16 pr-8 py-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-[#8e7a1d]/5 outline-none text-xl font-semibold transition-all" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                         </div>
                                     </div>
                                     {activeView === "Programa" && (
-                                        <div className="space-y-3">
-                                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Jornada</label>
-                                            <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 gap-1">
-                                                {["Todos", "Viernes", "Sábado"].map(day => (<button key={day} onClick={() => setActiveDay(day)} className={`flex-1 py-3.5 rounded-xl text-[10px] font-black uppercase ${activeDay === day ? "bg-white text-[#8e7a1d] shadow-sm" : "text-slate-500"}`}>{day}</button>))}
+                                        <div class="space-y-3">
+                                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jornada</label>
+                                            <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 gap-1">
+                                                {["Todos", "Viernes", "Sábado"].map(d => (<button key={d} onClick={() => setActiveDay(d)} class={`flex-1 py-3.5 rounded-xl text-[10px] font-black uppercase ${activeDay === d ? "bg-white text-[#8e7a1d] shadow-lg scale-[1.03]" : "text-slate-500 hover:text-slate-900"}`}>{d}</button>))}
                                             </div>
                                         </div>
                                     )}
@@ -240,33 +251,43 @@
                         </div>
 
                         {activeView === "Programa" ? (
-                            <div className="space-y-8">
+                            <div class="space-y-8">
                                 {filteredProgram.map((item, index) => {
-                                    const showDaySeparator = activeDay === "Todos" && index > 0 && item.day !== filteredProgram[index - 1].day;
-                                    const sortedMods = [...item.moderators].sort((a, b) => getSortableName(a).localeCompare(getSortableName(b)));
-                                    const sortedSps = [...item.speakers].sort((a, b) => getSortableName(a).localeCompare(getSortableName(b)));
+                                    const showSeparator = activeDay === "Todos" && index > 0 && item.day !== filteredProgram[index - 1].day;
+                                    const sortedSps = [...item.speakers].sort((a,b) => getSortableName(a).localeCompare(getSortableName(b)));
+                                    const sortedMods = [...item.mods].sort((a,b) => getSortableName(a).localeCompare(getSortableName(b)));
                                     return (
                                         <div key={index}>
-                                            {showDaySeparator && (<div className="py-12 flex items-center gap-6"><div className="h-px bg-stone-300 flex-grow"></div><div className="flex items-center gap-3 text-stone-400 font-black uppercase tracking-[0.4em] text-xs"><Icon name="calendar" size={14} /> {item.day}</div><div className="h-px bg-stone-300 flex-grow"></div></div>)}
-                                            <div className={`bg-white rounded-[2rem] border overflow-hidden shadow-sm hover:shadow-2xl transition-all group ${item.isSpecialBlock ? 'border-[#8e7a1d]/30' : 'border-slate-200'}`}>
-                                                <div className={`${item.isSpecialBlock ? 'bg-[#8e7a1d]/5' : 'bg-slate-50/50'} border-b border-slate-100 px-8 py-4 flex flex-wrap items-center justify-between gap-4`}>
-                                                    <div className="flex items-center gap-4">
-                                                        <div className={`p-2 rounded-lg ${item.category === "Pausa" ? 'bg-amber-100 text-amber-600' : item.isSpecialBlock ? 'bg-[#8e7a1d] text-white' : 'bg-slate-200'}`}>
-                                                            <Icon name={item.category === "Pausa" ? "coffee" : "book-open"} size={18} />
-                                                        </div>
-                                                        <span className={`text-[13px] font-black uppercase tracking-widest ${item.isSpecialBlock ? 'text-[#8e7a1d]' : 'text-slate-500'}`}>{item.block}</span>
+                                            {showSeparator && (<div class="py-12 flex items-center gap-6 text-stone-400 uppercase tracking-[0.4em] text-xs font-black"><div class="h-px bg-stone-300 flex-grow"></div><Icon name="calendar" size={14}/> {item.day}<div class="h-px bg-stone-300 flex-grow"></div></div>)}
+                                            <div class={`bg-white rounded-[2rem] border shadow-sm hover:shadow-2xl transition-all duration-300 group overflow-hidden ${item.isSpecialBlock ? 'border-[#8e7a1d]/30 ring-1 ring-[#8e7a1d]/5' : 'border-slate-200'}`}>
+                                                <div class={`${item.isSpecialBlock ? 'bg-[#8e7a1d]/5' : 'bg-slate-50/50'} border-b border-slate-100 px-8 py-4 flex flex-wrap items-center justify-between gap-4`}>
+                                                    <div class="flex items-center gap-4">
+                                                        <div class={`p-2 rounded-lg ${item.cat === "Pausa" ? 'bg-amber-100 text-amber-600' : item.isSpecialBlock ? 'bg-[#8e7a1d] text-white' : 'bg-slate-200 text-slate-500'}`}><Icon name={item.cat === "Pausa" ? "coffee" : "book-open"} size={18}/></div>
+                                                        <span class={`text-[13px] font-black uppercase tracking-widest ${item.isSpecialBlock ? 'text-[#8e7a1d]' : 'text-slate-500'}`}>{item.block}</span>
                                                     </div>
-                                                    {sortedMods.length > 0 && (<div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm"><Icon name="users" size={16} className="text-slate-400" /><span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">Moderadores:</span><div className="flex flex-wrap gap-2">{sortedMods.map(m => (<div key={m} className="text-[11px] font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50">{m}</div>))}</div></div>)}
+                                                    {sortedMods.length > 0 && (<div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm"><Icon name="users" size={16} class="text-slate-400"/><span class="text-[10px] font-black text-slate-400 uppercase tracking-tight">Moderadores:</span><div class="flex flex-wrap gap-2">{sortedMods.map(m => (<div key={m} class="text-[11px] font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50 whitespace-nowrap">{m}</div>))}</div></div>)}
                                                 </div>
-                                                <div className="p-8">
-                                                    <div className="flex flex-col lg:flex-row gap-10">
-                                                        <div className="lg:w-36 shrink-0">
-                                                            <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl font-black text-2xl shadow-inner ${item.category === "Pausa" ? 'bg-amber-500 text-white' : item.isSpecialBlock ? 'bg-[#8e7a1d] text-white' : 'bg-slate-900 text-white'}`}><Icon name="clock" size={22} /> {item.time.split(' ')[0]}</div>
-                                                            <div className="mt-3 text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">{item.day.split(',')[0]}</div>
+                                                <div class="p-8 md:p-10">
+                                                    <div class="flex flex-col lg:flex-row gap-10">
+                                                        <div class="lg:w-36 shrink-0">
+                                                            <div class={`inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl font-black text-2xl shadow-inner ${item.cat === "Pausa" ? 'bg-amber-500 text-white' : item.isSpecialBlock ? 'bg-[#8e7a1d] text-white' : 'bg-slate-900 text-white'}`}><Icon name="clock" size={22}/> {item.time}</div>
+                                                            <div class="mt-3 text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">{item.day.split(',')[0]}</div>
                                                         </div>
-                                                        <div className="flex-grow space-y-6">
-                                                            <h3 className={`text-2xl md:text-3xl font-bold leading-tight group-hover:text-[#8e7a1d] transition-colors ${item.category === "Discusión" ? 'text-slate-400 italic' : ''}`}>{item.title}</h3>
-                                                            {sortedSps.length > 0 && (<div className="grid gap-3">{sortedSps.map(s => (<div key={s} className="flex items-start gap-4 bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100 hover:bg-white hover:border-[#8e7a1d]/20 transition-all"><div className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center bg-slate-800 text-white"><Icon name="user" size={18} /></div><div><p className="font-extrabold text-slate-800 tracking-tight leading-none mb-1">{s}</p><p className="text-xs text-slate-500 leading-snug">{affiliations[s] || "Afiliación no detallada"}</p></div></div>))}</div>)}
+                                                        <div class="flex-grow space-y-6">
+                                                            <h3 class={`text-2xl md:text-3xl font-bold leading-tight group-hover:text-[#8e7a1d] transition-colors ${item.cat === "Discusión" ? 'text-slate-400 italic font-medium' : ''}`}>{item.title}</h3>
+                                                            {sortedSps.length > 0 && (
+                                                                <div class="grid gap-3">
+                                                                    {sortedSps.map(s => (
+                                                                        <div key={s} class="flex items-start gap-4 bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100 hover:bg-white hover:border-[#8e7a1d]/20 transition-all group/item">
+                                                                            <div class={`w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 ${item.isSpecialBlock ? 'bg-[#8e7a1d]' : 'bg-slate-800'}`}><Icon name="user" size={18}/></div>
+                                                                            <div>
+                                                                                <p class="font-extrabold text-slate-800 tracking-tight mb-1">{s}</p>
+                                                                                <p class="text-xs text-slate-500 leading-snug">{affiliations[s] || "Afiliación no detallada"}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -276,39 +297,46 @@
                                 })}
                             </div>
                         ) : (
-                            <div className="grid md:grid-cols-2 gap-6">
+                            <div class="grid md:grid-cols-2 gap-6">
                                 {filteredPeople.map(p => (
-                                    <div key={p.name} className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm hover:shadow-xl transition-all flex flex-col h-full">
-                                        <div className="flex items-start gap-5 mb-6">
-                                            <div className="w-16 h-16 rounded-2xl bg-[#8e7a1d]/10 flex items-center justify-center text-[#8e7a1d] shrink-0"><Icon name="user" size={32} /></div>
-                                            <div><h3 className="text-xl font-black text-slate-900 leading-tight mb-1">{p.name}</h3><div className="flex items-center gap-2 text-slate-500"><Icon name="building" size={14} /><p className="text-xs font-semibold leading-snug">{p.affiliation}</p></div></div>
+                                    <div key={p.name} class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm hover:shadow-xl transition-all flex flex-col h-full group">
+                                        <div class="flex items-start gap-5 mb-6">
+                                            <div class="w-16 h-16 rounded-2xl bg-[#8e7a1d]/10 flex items-center justify-center text-[#8e7a1d] shrink-0 group-hover:bg-[#8e7a1d] group-hover:text-white transition-all"><Icon name="user" size={32}/></div>
+                                            <div><h3 class="text-xl font-black text-slate-900 leading-tight mb-1">{p.name}</h3><div class="flex items-center gap-2 text-slate-500"><Icon name="building" size={14} class="shrink-0"/><p class="text-xs font-semibold leading-snug">{p.aff}</p></div></div>
                                         </div>
-                                        <div className="flex-grow space-y-3">
-                                            <div className="h-px bg-slate-100 w-full mb-4"></div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Intervenciones:</p>
-                                            {p.roles.map((r, i) => (<div key={i} className="bg-slate-50 rounded-xl p-3 border border-slate-100"><div className="flex justify-between items-center"><span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${r.type === "Ponente" ? "bg-[#8e7a1d] text-white" : "bg-slate-800 text-white"}`}>{r.type}</span><span className="text-[9px] font-bold text-slate-400">{r.time} • {r.day.split(',')[0]}</span></div><p className="text-xs font-black mt-1 leading-snug">{r.title}</p><div className="flex items-center gap-1 mt-1 opacity-60"><Icon name="book-open" size={10} /><span className="text-[10px] font-bold text-slate-500 truncate">{r.block}</span></div></div>))}
+                                        <div class="flex-grow space-y-3">
+                                            <div class="h-px bg-slate-100 w-full mb-4"></div>
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Participación:</p>
+                                            {p.roles.map((r, i) => (
+                                                <div key={i} class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col gap-1 hover:border-[#8e7a1d]/20 transition-all">
+                                                    <div class="flex justify-between items-center"><span class={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${r.type === "Ponente" ? "bg-[#8e7a1d] text-white" : "bg-slate-800 text-white"}`}>{r.type}</span><span class="text-[9px] font-bold text-slate-400">{r.time} • {r.day.split(',')[0]}</span></div>
+                                                    <p class="text-xs font-black mt-1 leading-snug">{r.title}</p>
+                                                    <div class="flex items-center gap-1 mt-1 opacity-60"><Icon name="book-open" size={10}/><span class="text-[10px] font-bold text-slate-500 truncate">{r.block}</span></div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
 
-                        <footer className="mt-24 border-t-2 border-slate-200 pt-20">
-                            <div className="relative overflow-hidden bg-slate-900 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl">
-                                <div className="absolute right-0 bottom-0 p-10 opacity-10 rotate-12 pointer-events-none"><Icon name="sparkles" size={350} /></div>
-                                <div className="relative z-10 max-w-3xl">
-                                    <div className="inline-flex items-center gap-4 bg-[#8e7a1d] px-5 py-2 rounded-xl mb-8 font-black uppercase tracking-[0.3em] text-[11px]">Innovación & Futuro</div>
-                                    <h4 className="text-3xl md:text-5xl font-extrabold mb-10 leading-tight">Si esta aplicación te ha gustado, no te debes perder el <br className="hidden lg:block"/><span className="text-[#a18c26] underline decoration-white/10 decoration-8 underline-offset-8">"Taller de IA en EAS"</span></h4>
-                                    <div className="flex flex-wrap gap-6 mb-12">
-                                        <div className="bg-white/5 px-8 py-5 rounded-[1.5rem] border border-white/10 flex items-center gap-4"><Icon name="calendar" className="text-[#8e7a1d]" size={24} /><span className="text-xl font-black italic">Sábado 7/2/26</span></div>
-                                        <div className="bg-white/5 px-8 py-5 rounded-[1.5rem] border border-white/10 flex items-center gap-4"><Icon name="clock" className="text-[#8e7a1d]" size={24} /><span className="text-xl font-black italic">16:30 h</span></div>
+                        <footer class="mt-24 border-t-2 border-slate-200 pt-20">
+                            <div class="relative overflow-hidden bg-slate-900 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl">
+                                <div class="absolute right-0 bottom-0 p-10 opacity-10 rotate-12 pointer-events-none text-white"><Icon name="sparkles" size={350}/></div>
+                                <div class="relative z-10 max-w-3xl">
+                                    <div class="inline-flex bg-[#8e7a1d] px-5 py-2 rounded-xl mb-8 font-black uppercase tracking-[0.3em] text-[11px]">Innovación & Futuro</div>
+                                    <h4 class="text-3xl md:text-5xl font-extrabold mb-10 leading-tight tracking-tight">Si esta aplicación te ha gustado, no te debes perder el <br class="hidden lg:block"/><span class="text-[#a18c26] underline decoration-white/10 decoration-8 underline-offset-8">"Taller de IA en EAS"</span></h4>
+                                    <div class="flex flex-wrap gap-6 mb-12">
+                                        <div class="bg-white/5 px-8 py-5 rounded-[1.5rem] border border-white/10 flex items-center gap-4"><Icon name="calendar" class="text-[#8e7a1d]" size={24}/><span class="text-xl font-black italic">Sábado 7/2/26</span></div>
+                                        <div class="bg-white/5 px-8 py-5 rounded-[1.5rem] border border-white/10 flex items-center gap-4"><Icon name="clock" class="text-[#8e7a1d]" size={24}/><span class="text-xl font-black italic">16:30 h</span></div>
                                     </div>
-                                    <div className="pt-10 border-t border-white/10">
-                                        <p className="text-[10px] uppercase tracking-[0.4em] font-black text-white/40 mb-6">Aplicación creada por cortesía de:</p>
-                                        <div className="grid grid-cols-2 md:flex md:flex-wrap gap-x-12 gap-y-4">{["José Miguel Sequí", "Miguel Martín", "Toni Sisó", "Manel Ramos"].map(n => (<div key={n} className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#8e7a1d]"></div><span className="text-sm font-black tracking-tight">{n}</span></div>))}</div>
+                                    <div class="pt-10 border-t border-white/10">
+                                        <p class="text-[10px] uppercase tracking-[0.4em] font-black text-white/40 mb-6">Aplicación creada por cortesía de:</p>
+                                        <div class="grid grid-cols-2 md:flex md:flex-wrap gap-x-12 gap-y-4">{["José Miguel Sequí", "Miguel Martín", "Toni Sisó", "Manel Ramos"].map(n => (<div key={n} class="flex items-center gap-3"><div class="w-1.5 h-1.5 rounded-full bg-[#8e7a1d]"></div><span class="text-sm font-black tracking-tight">{n}</span></div>))}</div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="mt-16 text-center opacity-30 flex flex-wrap justify-center gap-x-8 gap-y-2 text-[10px] font-black uppercase tracking-widest px-6"><span>Universitat de Barcelona</span> • <span>Clínica Universidad de Navarra</span> • <span>London Lupus Centre</span></div>
                         </footer>
                     </main>
                 </div>
